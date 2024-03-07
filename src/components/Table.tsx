@@ -1,11 +1,17 @@
 import React from 'react';
 import Client from '../core/Client';
+import { EditIcon, DeleteIcon } from '@/assets/icons';
 
 interface TableProps {
     clients: Client[];
+    selectedClient?: (client: Client) => void;
+    deleteClient?: (client: Client) => void;
 }
 
-const Table: React.FC<TableProps> = ({ clients }) => {
+const Table: React.FC<TableProps> = ({ clients, selectedClient, deleteClient }) => {
+
+    const hasActions = selectedClient || deleteClient;
+
     const renderTableHead = () => {
         return (
             <thead className={'bg-gradient-to-r from-purple-500 to-purple-800 text-grey-200'}>
@@ -13,7 +19,7 @@ const Table: React.FC<TableProps> = ({ clients }) => {
                     <th className="p-4 text-left">Id</th>
                     <th className="p-4 text-left">Name</th>
                     <th className="p-4 text-left">Age</th>
-                    <th className="p-4 text-left">Actions</th>
+                    {hasActions && <th className="p-4 text-center">Actions</th>}
                 </tr>
             </thead>
         )
@@ -27,10 +33,20 @@ const Table: React.FC<TableProps> = ({ clients }) => {
                         <td className="p-4 text-left">{client.id}</td>
                         <td className="p-4 text-left">{client.name}</td>
                         <td className="p-4 text-left">{client.age}</td>
-                        <td className="p-4 text-left">
-                            <button>Edit</button>
-                            <button>Delete</button>
-                        </td>
+                        {hasActions && (
+                            <td className="p-4 flex justify-center">
+                                {selectedClient && (
+                                    <button onClick={() => selectedClient?.(client)} className="p-2 m-1 flex justify-center items-center text-green-500 hover:bg-gray-100 rounded-full">
+                                        {EditIcon}
+                                    </button>
+                                )}
+                                {deleteClient && (
+                                    <button onClick={() => deleteClient?.(client)} className="p-2 ms-1 flex justify-center items-center text-red-500 hover:bg-gray-100 rounded-full">
+                                        {DeleteIcon}
+                                    </button>
+                                )}
+                            </td>
+                        )}
                     </tr>
                 ))}
             </tbody>
